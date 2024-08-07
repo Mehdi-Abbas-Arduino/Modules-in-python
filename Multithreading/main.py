@@ -9,11 +9,44 @@
 
 import threading
 import time 
-# start = time.time()
+from concurrent.futures import ThreadPoolExecutor
+# Indicates some task be done
 print(threading.active_count())
-print(threading.enumerate())
-# print(time.thread_time())
-# end = time.time()
-# print(f"The execution time taken is {end-start}")
-import multiprocessing
-# print(multiprocessing.active_children())
+def func (seconds):
+    print(f"Sleeping for {seconds}")
+    time.sleep(seconds)
+    return seconds
+time1 = time.perf_counter()
+
+# func(seconds=4)
+def main():
+    t1 = threading.Thread(target=func,args=[4])
+
+    t2 = threading.Thread(target=func,args=[2])
+
+    t3 = threading.Thread(target=func,args=[1])
+
+    t1.start()
+    t2.start()
+    t3.start()
+
+    t1.join()
+    t2.join()
+    t3.join()
+    time2 = time.perf_counter()
+    print(f"Execution time is {time2-time1}")
+
+def poolingDemo():
+    with ThreadPoolExecutor() as executor:
+        # future = executor.submit(func,3)
+        # print(future.result())
+        # future = executor.submit(func,5)
+        # print(future.result())
+        # future = executor.submit(func,6)
+        # print(future.result())
+        l = [3,5,6,7,8]
+        results = executor.map(func,l)
+        for result in results:
+            print(result)
+
+poolingDemo()
